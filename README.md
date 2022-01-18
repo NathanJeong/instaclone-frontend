@@ -1,5 +1,10 @@
 # instagram frontend clone
 
+# 1-1. Installing All
+
+npm i styled-components react-hook-form react-router-dom@5.2.0 @apollo/client graphql react-helmet-async
+npm i --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome @fortawesome/free-brands-svg-icons @fortawesome/free-regular-svg-icons
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
