@@ -1,10 +1,10 @@
 # instagram frontend clone
 
 - [x] Router
-- [ ] Authentication
-- [ ] Architecture
+- [x] Authentication
+- [x] Architecture
 - [ ] Styles
-- [ ]
+- [ ] Log In
 
 # Installed
 
