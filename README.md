@@ -4,7 +4,10 @@
 - [x] Authentication
 - [x] Architecture
 - [x] Styles
-- [ ] Log In
+- [ ] Log In / Sign Up
+- [ ] Feed
+- [ ] Profile
+- [ ] See Hashtag
 
 # Installed
 
