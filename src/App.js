@@ -6,7 +6,7 @@ import routes from "./routes";
 import Home from "./screens/Home";
 import Login from "./screens/Login";
 import NotFound from "./screens/NotFound";
-import Signup from "./screens/Signup";
+import SignUp from "./screens/SignUp";
 import { darkTheme, GlobalStyles, lightTheme } from "./styles";
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           </Route>
           {!isLoggedIn ? (
             <Route path={routes.signUp}>
-              <Signup />
+              <SignUp />
             </Route>
           ) : null}
           <Route>
