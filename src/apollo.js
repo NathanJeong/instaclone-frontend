@@ -1,5 +1,4 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
-import routes from "./routes";
 
 const TOKEN = "token";
 const DARK_MODE = "DARK_MODE";
