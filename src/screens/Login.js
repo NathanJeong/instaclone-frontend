@@ -1,3 +1,4 @@
+import { useMutation, gql } from "@apollo/client";
 import {
   faFacebookSquare,
   faInstagram,
@@ -22,17 +23,47 @@ const FacebookLogin = styled.div`
     font-weight: 600;
   }
 `;
+const LOGIN_MUTATION = gql`
+  mutation login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      success
+      token
+      error
+    }
+  }
+`;
 
 function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
+    getValues,
+    setError,
   } = useForm({
     mode: "onChange",
   });
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted: (data) => {
+      const {
+        login: { success, error, token },
+      } = data;
+      if (!success) {
+        setError("result", {
+          message: error,
+        });
+      }
+      console.log(data);
+    },
+  });
   const onSubmitValid = (data) => {
-    console.log(data);
+    if (loading) {
+      return;
+    }
+    const { email, password } = getValues();
+    login({
+      variables: { email, password },
+    });
   };
   return (
     <AuthLayout>
@@ -42,19 +73,20 @@ function Login() {
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
         <form onSubmit={handleSubmit(onSubmitValid)}>
+          <FormError message={errors?.result?.message} />
           <Input
-            {...register("username", {
-              required: "Username is Required",
+            {...register("email", {
+              required: "Email is Required",
               minLength: {
                 value: 6,
-                message: "Username should be longer than 6 characters",
+                message: "Email should be longer than 6 characters",
               },
             })}
-            type="text"
-            placeholder="Username"
-            hasError={Boolean(errors?.username?.message)}
+            type="email"
+            placeholder="email"
+            hasError={Boolean(errors?.email?.message)}
           />
-          <FormError message={errors?.username?.message} />
+          <FormError message={errors?.email?.message} />
           <Input
             {...register("password", { required: "Password is Required" })}
             type="password"
@@ -62,7 +94,11 @@ function Login() {
             hasError={Boolean(errors?.password?.message)}
           />
           <FormError message={errors?.password?.message} />
-          <Button type="submit" value="Log in" disabled={!isValid} />
+          <Button
+            type="submit"
+            value={loading ? "Loading..." : "Login"}
+            disabled={!isValid || loading}
+          />
         </form>
         <Separator />
         <FacebookLogin>
