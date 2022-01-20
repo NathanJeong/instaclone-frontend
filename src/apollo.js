@@ -1,4 +1,5 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import routes from "./routes";
 
 const TOKEN = "token";
 const DARK_MODE = "DARK_MODE";
@@ -12,6 +13,7 @@ export const logUserOut = (history) => {
   localStorage.removeItem(TOKEN);
   history.replace();
   window.location.reload();
+  isLoggedInVar(false);
 };
 export const darkMoveVar = makeVar(Boolean(localStorage.getItem(DARK_MODE)));
 export const enableDarkMode = () => {
