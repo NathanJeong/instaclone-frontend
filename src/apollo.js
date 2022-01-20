@@ -7,9 +7,10 @@ export const logUserIn = (token) => {
   localStorage.setItem(TOKEN, token);
   isLoggedInVar(true);
 };
-export const logUserOut = () => {
+export const logUserOut = (history) => {
   localStorage.removeItem(TOKEN);
-  isLoggedInVar(false);
+  history.replace();
+  window.location.reload();
 };
 export const darkMoveVar = makeVar(false);
 export const client = new ApolloClient({

@@ -1,3 +1,4 @@
+import { useHistory } from "react-router";
 import styled from "styled-components";
 import { logUserOut } from "../apollo";
 
@@ -6,11 +7,12 @@ const Title = styled.h1`
   color: bisque;
 `;
 
-function Home({ setIsLoggedIn }) {
+function Home() {
+  const history = useHistory();
   return (
     <div>
       <Title>Home Page</Title>
-      <button onClick={() => logUserOut()}>Log out</button>
+      <button onClick={() => logUserOut(history)}>Log out</button>
     </div>
   );
 }

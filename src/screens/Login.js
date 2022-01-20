@@ -5,6 +5,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router";
 import styled from "styled-components";
 import { logUserIn } from "../apollo";
 import AuthLayout from "../components/auth/AuthLayout";
@@ -33,8 +34,13 @@ const LOGIN_MUTATION = gql`
     }
   }
 `;
+const Notification = styled.div`
+  color: #16a085;
+  margin-top: 10px;
+`;
 
 function Login() {
+  const location = useLocation();
   const {
     register,
     handleSubmit,
@@ -44,6 +50,10 @@ function Login() {
     clearErrors,
   } = useForm({
     mode: "onChange",
+    defaultValues: {
+      email: location?.state?.email,
+      password: location?.state?.password,
+    },
   });
   const [login, { loading }] = useMutation(LOGIN_MUTATION, {
     onCompleted: (data) => {
@@ -79,6 +89,7 @@ function Login() {
         <div>
           <FontAwesomeIcon icon={faInstagram} size="3x" />
         </div>
+        <Notification>{location?.state?.message}</Notification>
         <form onSubmit={handleSubmit(onSubmitValid)}>
           <FormError message={errors?.result?.message} />
           <Input
