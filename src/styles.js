@@ -6,11 +6,13 @@ export const lightTheme = {
   bgColor: "#FAFAFA",
   accent: "#0095f6",
   borderColor: "rgb(219,219,219)",
+  avatarColor: "#485460",
 };
 export const darkTheme = {
   fontColor: "white",
   bgColor: "#1e272e",
   borderColor: "rgb(219,219,219)",
+  avatarColor: "#d2dae2",
 };
 
 export const GlobalStyles = createGlobalStyle`
