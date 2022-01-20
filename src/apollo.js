@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
 
 const TOKEN = "token";
+const DARK_MODE = "DARK_MODE";
 
 export const isLoggedInVar = makeVar(Boolean(localStorage.getItem(TOKEN)));
 export const logUserIn = (token) => {
@@ -12,7 +13,15 @@ export const logUserOut = (history) => {
   history.replace();
   window.location.reload();
 };
-export const darkMoveVar = makeVar(false);
+export const darkMoveVar = makeVar(Boolean(localStorage.getItem(DARK_MODE)));
+export const enableDarkMode = () => {
+  localStorage.setItem(DARK_MODE, "enabled");
+  darkMoveVar(true);
+};
+export const disableDarkMode = () => {
+  localStorage.removeItem(DARK_MODE);
+  darkMoveVar(false);
+};
 export const client = new ApolloClient({
   uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache(),
