@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { isLoggedInVar } from "../apollo";
+import { logUserOut } from "../apollo";
 
 const Title = styled.h1`
   font-size: 25px;
@@ -10,7 +10,7 @@ function Home({ setIsLoggedIn }) {
   return (
     <div>
       <Title>Home Page</Title>
-      <button onClick={() => isLoggedInVar(false)}>Log out</button>
+      <button onClick={() => logUserOut()}>Log out</button>
     </div>
   );
 }

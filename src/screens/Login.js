@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import { logUserIn } from "../apollo";
 import AuthLayout from "../components/auth/AuthLayout";
 import BottomBox from "../components/auth/BottomBox";
 import Button from "../components/auth/Button";
@@ -40,6 +41,7 @@ function Login() {
     formState: { errors, isValid },
     getValues,
     setError,
+    clearErrors,
   } = useForm({
     mode: "onChange",
   });
@@ -49,11 +51,13 @@ function Login() {
         login: { success, error, token },
       } = data;
       if (!success) {
-        setError("result", {
+        return setError("result", {
           message: error,
         });
       }
-      console.log(data);
+      if (token) {
+        logUserIn(token);
+      }
     },
   });
   const onSubmitValid = (data) => {
@@ -64,6 +68,9 @@ function Login() {
     login({
       variables: { email, password },
     });
+  };
+  const clearLoginError = () => {
+    clearErrors("result");
   };
   return (
     <AuthLayout>
@@ -82,6 +89,7 @@ function Login() {
                 message: "Email should be longer than 6 characters",
               },
             })}
+            onFocus={clearLoginError}
             type="email"
             placeholder="email"
             hasError={Boolean(errors?.email?.message)}
@@ -89,6 +97,7 @@ function Login() {
           <FormError message={errors?.email?.message} />
           <Input
             {...register("password", { required: "Password is Required" })}
+            onFocus={clearLoginError}
             type="password"
             placeholder="Password"
             hasError={Boolean(errors?.password?.message)}
