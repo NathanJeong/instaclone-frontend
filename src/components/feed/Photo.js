@@ -11,7 +11,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as SolidHeart } from "@fortawesome/free-solid-svg-icons";
 import Avatar from "../Avatar";
-import { FEED_QUERY } from "../../screens/Home";
 
 const TOGGLE_LIKE_MUTATION = gql`
   mutation toggleLike($id: Int!) {
@@ -67,11 +66,31 @@ const Likes = styled(FatText)`
 `;
 
 function Photo({ id, likes, isLiked, file, user }) {
+  const updateToggleLike = (cache, result) => {
+    const {
+      data: {
+        toggleLike: { success },
+      },
+    } = result;
+    if (success) {
+      cache.writeFragment({
+        id: `Photo:${id}`,
+        fragment: gql`
+          fragment BSName on Photo {
+            isLiked
+          }
+        `,
+        data: {
+          isLiked: !isLiked,
+        },
+      });
+    }
+  };
   const [toggleLikeMutation, { loading }] = useMutation(TOGGLE_LIKE_MUTATION, {
     variables: {
       id,
     },
-    refetchQueries: [{ query: FEED_QUERY }],
+    update: updateToggleLike,
   });
   return (
     <PhotoContainer key={id}>
