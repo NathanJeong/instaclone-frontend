@@ -64,8 +64,31 @@ const Likes = styled(FatText)`
   margin-top: 10px;
   display: block;
 `;
+const Comments = styled.div`
+  margin-top: 20px;
+`;
+const Comment = styled.div``;
+const CommentCaption = styled.span`
+  margin-left: 10px;
+`;
+const CommentCount = styled.span`
+  opacity: 0.7;
+  margin: 10px 0px;
+  display: block;
+  font-weight: 600;
+  font-size: 10px;
+`;
 
-function Photo({ id, likes, isLiked, file, user }) {
+function Photo({
+  id,
+  likes,
+  isLiked,
+  file,
+  user,
+  caption,
+  comments,
+  commentNumber,
+}) {
   const updateToggleLike = (cache, result) => {
     const {
       data: {
@@ -76,12 +99,14 @@ function Photo({ id, likes, isLiked, file, user }) {
       cache.writeFragment({
         id: `Photo:${id}`,
         fragment: gql`
-          fragment BSName on Photo {
+          fragment updateLike on Photo {
             isLiked
+            likes
           }
         `,
         data: {
           isLiked: !isLiked,
+          likes: isLiked ? likes - 1 : likes + 1,
         },
       });
     }
@@ -121,6 +146,15 @@ function Photo({ id, likes, isLiked, file, user }) {
           </div>
         </PhotoActions>
         <Likes>{likes === 1 ? "1 like" : `${likes} likes`}</Likes>
+        <Comments>
+          <Comment>
+            <FatText>{user.userName}</FatText>
+            <CommentCaption>{caption}</CommentCaption>
+          </Comment>
+          <CommentCount>
+            {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
+          </CommentCount>
+        </Comments>
       </PhotoData>
     </PhotoContainer>
   );
@@ -134,5 +168,8 @@ Photo.propTypes = {
     avatar: PropTypes.string,
     userName: PropTypes.string.isRequired,
   }),
+  caption: PropTypes.string,
+  commentNumber: PropTypes.number.isRequired,
+  comments: PropTypes.arrayOf(PropTypes.shape({})),
 };
 export default Photo;
