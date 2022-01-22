@@ -47,6 +47,7 @@ function Home() {
           caption={photo.caption}
           commentNumber={photo.commentNumber}
           comments={photo.comments}
+          // {...photo}
         />
       ))}
     </div>
