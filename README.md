@@ -4,7 +4,7 @@
 - [x] Authentication
 - [x] Architecture
 - [x] Styles
-- [ ] Log In / Sign Up
+- [x] Log In / Sign Up
 - [ ] Feed
 - [ ] Profile
 - [ ] See Hashtag
@@ -14,6 +14,8 @@
 npm i styled-components react-hook-form react-router-dom@5.2.0 @apollo/client graphql react-helmet-async
 
 npm i --save @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome @fortawesome/free-brands-svg-icons @fortawesome/free-regular-svg-icons
+
+npm i sanitize-html
 
 # Getting Started with Create React App
 
