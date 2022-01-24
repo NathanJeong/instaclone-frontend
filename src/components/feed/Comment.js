@@ -91,6 +91,10 @@ const DeleteButton = styled.button`
     opacity: 1;
   }
 `;
+const Username = styled.div`
+  width: 10%;
+  margin-right: 5px;
+`;
 
 function Comment({ id, isMine, photoId, author, payload }) {
   const { data: userData } = useUser();
@@ -197,7 +201,11 @@ function Comment({ id, isMine, photoId, author, payload }) {
   };
   return (
     <CommentContainer>
-      <FatText>{author}</FatText>
+      <Username>
+        <Link to={`/users/${author}`}>
+          <FatText>{author}</FatText>
+        </Link>
+      </Username>
       <CaptionContainer>
         {isMine &&
           (onEditing ? (
