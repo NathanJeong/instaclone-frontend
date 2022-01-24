@@ -24,6 +24,24 @@ const CommentCount = styled.span`
   font-weight: 600;
   font-size: 10px;
 `;
+const PostCommentContainer = styled.div`
+  margin-top: 10px;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  border-top: 1px solid ${(props) => props.theme.borderColor};
+`;
+const PostCommentInput = styled.input`
+  width: 100%;
+  padding: 3px 0px;
+  border-bottom: 0.1px solid ${(props) => props.theme.borderColor};
+  border-radius: 5px;
+  &::placeholder {
+    font-size: 12px;
+  }
+  :focus {
+    border-color: ${(props) => props.theme.borderColor};
+  }
+`;
 
 function Comments({ photoId, author, caption, commentNumber, comments }) {
   const { register, handleSubmit, setValue, getValues } = useForm();
@@ -47,11 +65,26 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
           ...userData.me,
         },
       };
+      const newCacheComment = cache.writeFragment({
+        data: newComment,
+        fragment: gql`
+          fragment BSName on Comment {
+            id
+            createdAt
+            isMine
+            payload
+            user {
+              userName
+              avatar
+            }
+          }
+        `,
+      });
       cache.modify({
         id: `Photo:${photoId}`,
         fields: {
           comments(prev) {
-            return [...prev, newComment];
+            return [...prev, newCacheComment];
           },
           commentNumber(prev) {
             return prev + 1;
@@ -84,13 +117,15 @@ function Comments({ photoId, author, caption, commentNumber, comments }) {
       <CommentCount>
         {commentNumber === 1 ? "1 comment" : `${commentNumber} comments`}
       </CommentCount>
-      <form onSubmit={handleSubmit(onValid)}>
-        <input
-          {...register("payload", { required: true })}
-          type="text"
-          placeholder="Write your comment"
-        />
-      </form>
+      <PostCommentContainer>
+        <form onSubmit={handleSubmit(onValid)}>
+          <PostCommentInput
+            {...register("payload", { required: true })}
+            type="text"
+            placeholder="Write your comment"
+          />
+        </form>
+      </PostCommentContainer>
       {comments?.map((comment) => (
         <Comment
           key={comment.id}
