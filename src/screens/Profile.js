@@ -7,6 +7,7 @@ import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
+import useUser from "../hooks/useUser";
 
 const SEE_PROFILE_QUERY = gql`
   query seeProfile($userName: String!) {
@@ -130,6 +131,7 @@ const ProfileBtn = styled(Button).attrs({
 `;
 function Profile() {
   const { userName } = useParams();
+  const { data: userData } = useUser();
   const client = useApolloClient();
   const { data, loading } = useQuery(SEE_PROFILE_QUERY, {
     variables: {
@@ -159,6 +161,17 @@ function Profile() {
         },
       },
     });
+    const { me } = userData;
+    cache.modify({
+      id: `User:${me.userName}`,
+      fields: {
+        totalFollowing(prev, { readField }) {
+          if (readField("totalFollowing")) {
+            return prev - 1;
+          }
+        },
+      },
+    });
   };
   const [unfollowUserMutation] = useMutation(UNFOLLOW_USER_MUTATION, {
     variables: {
@@ -182,6 +195,17 @@ function Profile() {
         },
         totalFollowers(prev, { readField }) {
           if (readField("isFollowing")) {
+            return prev + 1;
+          }
+        },
+      },
+    });
+    const { me } = userData;
+    cache.modify({
+      id: `User:${me.userName}`,
+      fields: {
+        totalFollowing(prev, { readField }) {
+          if (readField("totalFollowing")) {
             return prev + 1;
           }
         },

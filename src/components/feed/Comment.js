@@ -162,11 +162,13 @@ function Comment({ id, isMine, photoId, author, payload }) {
       cache.modify({
         id: `Photo:${photoId}`,
         fields: {
-          comments(prev) {
+          comments(prev, { readField }) {
             const remain = prev.filter(
               (comment) => comment.__ref !== `Comment:${id}`
             );
-            return [...remain, newCacheComment];
+            if (readField("Comment")) {
+              return [...remain, newCacheComment];
+            }
           },
         },
       });
