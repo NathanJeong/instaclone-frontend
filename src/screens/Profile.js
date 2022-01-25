@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { PHOTO_FRAGMENT } from "../fragments";
 import styled from "styled-components";
 import { FatText } from "../components/shared";
@@ -7,7 +7,6 @@ import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "../components/auth/Button";
 import PageTitle from "../components/PageTitle";
-import useUser, { ME_QUERY } from "../hooks/useUser";
 
 const SEE_PROFILE_QUERY = gql`
   query seeProfile($userName: String!) {
@@ -131,29 +130,69 @@ const ProfileBtn = styled(Button).attrs({
 `;
 function Profile() {
   const { userName } = useParams();
-  const { data: userData } = useUser();
+  const client = useApolloClient();
   const { data, loading } = useQuery(SEE_PROFILE_QUERY, {
     variables: {
       userName,
     },
   });
-  const [followUserMutation] = useMutation(FOLLOW_USER_MUTATION, {
-    variables: {
-      userName,
-    },
-    refetchQueries: [
-      { query: SEE_PROFILE_QUERY, variables: { userName } },
-      { query: ME_QUERY },
-    ],
-  });
+
+  const unfollowUserUpdate = (cache, result) => {
+    const {
+      data: {
+        unfollowUser: { success },
+      },
+    } = result;
+    if (!success) {
+      return;
+    }
+    cache.modify({
+      id: `User:${userName}`,
+      fields: {
+        isFollowing(prev) {
+          return false;
+        },
+        totalFollowers(prev, { readField }) {
+          if (readField("isFollowing")) {
+            return prev - 1;
+          }
+        },
+      },
+    });
+  };
   const [unfollowUserMutation] = useMutation(UNFOLLOW_USER_MUTATION, {
     variables: {
       userName,
     },
-    refetchQueries: [
-      { query: SEE_PROFILE_QUERY, variables: { userName } },
-      { query: ME_QUERY },
-    ],
+    update: unfollowUserUpdate,
+  });
+  const followUserCompleted = (data) => {
+    const {
+      followUser: { success },
+    } = data;
+    if (!success) {
+      return;
+    }
+    const { cache } = client;
+    cache.modify({
+      id: `User:${userName}`,
+      fields: {
+        isFollowing(prev) {
+          return true;
+        },
+        totalFollowers(prev, { readField }) {
+          if (readField("isFollowing")) {
+            return prev + 1;
+          }
+        },
+      },
+    });
+  };
+  const [followUserMutation] = useMutation(FOLLOW_USER_MUTATION, {
+    variables: {
+      userName,
+    },
+    onCompleted: followUserCompleted,
   });
   const getButton = (seeProfile) => {
     const { isMe, isFollowing } = seeProfile;
